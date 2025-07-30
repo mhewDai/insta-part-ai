@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { ChatMessage } from './ChatMessage';
 import { QuickActions } from './QuickActions';
 import { TypingIndicator } from './TypingIndicator';
+import { apiService, type Product } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Message {
   id: string;
@@ -33,6 +35,7 @@ export const ChatInterface = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -53,28 +56,43 @@ export const ChatInterface = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate API call to backend
-    setTimeout(() => {
+    try {
+      // Call your FastAPI backend
+      const response = await apiService.sendMessage(currentInput);
+      
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: generateBotResponse(inputValue),
+        content: response.response,
         timestamp: new Date(),
-        productCard: shouldShowProduct(inputValue) ? {
-          name: 'Refrigerator Water Filter',
-          partNumber: 'PS11752778',
-          price: '$49.99',
-          image: '/api/placeholder/200/150',
-          compatibility: ['WDT780SAEM1', 'WRS325SDHZ', 'WRF535SWHZ']
-        } : undefined,
+        productCard: response.part_suggestions?.[0] ? formatProductCard(response.part_suggestions[0]) : undefined,
       };
 
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'bot',
+        content: 'I apologize, but I\'m having trouble connecting to our service right now. Please try again in a moment.',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
+      
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the chat service. Please check that your backend is running.",
+        variant: "destructive",
+      });
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleQuickAction = (action: string) => {
@@ -150,31 +168,12 @@ export const ChatInterface = () => {
 };
 
 // Helper functions
-const generateBotResponse = (userInput: string): string => {
-  const input = userInput.toLowerCase();
-  
-  if (input.includes('install') || input.includes('installation')) {
-    return "I'll help you with installation instructions. Please provide the part number or model of your appliance, and I'll guide you through the step-by-step process.";
-  }
-  
-  if (input.includes('compatible') || input.includes('compatibility')) {
-    return "I can check part compatibility for you. Please share your appliance model number, and I'll verify which parts work with your specific unit.";
-  }
-  
-  if (input.includes('ice maker') || input.includes('not working')) {
-    return "Ice maker issues are common. Let me help troubleshoot this. First, can you tell me your refrigerator model and describe the specific problem you're experiencing?";
-  }
-  
-  if (input.includes('ps11752778') || input.includes('part number')) {
-    return "I found information about part PS11752778. This is a water filter compatible with several refrigerator models. Here are the details:";
-  }
-  
-  return "I understand you need help with your appliance. Could you provide more details about your specific issue, including your appliance model number if possible?";
-};
-
-const shouldShowProduct = (userInput: string): boolean => {
-  const input = userInput.toLowerCase();
-  return input.includes('ps11752778') || 
-         input.includes('water filter') || 
-         input.includes('part number');
+const formatProductCard = (product: Product) => {
+  return {
+    name: product.name,
+    partNumber: product.id,
+    price: `$${product.price.toFixed(2)}`,
+    image: product.image_url || '/api/placeholder/200/150',
+    compatibility: product.compatible_models,
+  };
 };
