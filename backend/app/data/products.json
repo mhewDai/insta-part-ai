@@ -1,0 +1,37 @@
+{
+  "products": [
+    {
+      "id": "PS11752778",
+      "name": "Refrigerator Water Filter",
+      "category": "refrigerator",
+      "brand": "Whirlpool",
+      "description": "Genuine OEM water filter for Whirlpool refrigerators. Reduces chlorine taste and odor.",
+      "price": 49.99,
+      "compatible_models": ["WDT780SAEM1", "WRS325SDHZ", "WRF535SWHZ", "WRS588FIHZ"],
+      "installation_guide": "1. Locate the filter compartment in the upper right corner of the refrigerator. 2. Turn the old filter counterclockwise to remove. 3. Remove the caps from the new filter. 4. Insert the new filter and turn clockwise until tight. 5. Run water for 3-5 minutes to clear air.",
+      "image_url": "/images/water-filter.jpg"
+    },
+    {
+      "id": "PS11741416",
+      "name": "Ice Maker Assembly",
+      "category": "refrigerator",
+      "brand": "Whirlpool",
+      "description": "Complete ice maker assembly for Whirlpool and KitchenAid refrigerators.",
+      "price": 189.99,
+      "compatible_models": ["WRS325SDHZ", "KRFF507HPS", "WRF535SWHZ"],
+      "installation_guide": "1. Disconnect power to refrigerator. 2. Remove ice bin and mounting screws. 3. Disconnect wire harness and water line. 4. Install new ice maker in reverse order. 5. Allow 24 hours for ice production.",
+      "image_url": "/images/ice-maker.jpg"
+    },
+    {
+      "id": "PS8268317",
+      "name": "Dishwasher Wash Pump Motor",
+      "category": "dishwasher",
+      "brand": "Whirlpool",
+      "description": "Replacement wash pump motor for Whirlpool and KitchenAid dishwashers.",
+      "price": 159.99,
+      "compatible_models": ["WDT780SAEM1", "KDFE104HPS", "WDF520PADM"],
+      "installation_guide": "1. Disconnect power and water supply. 2. Remove lower dish rack and spray arm. 3. Remove pump housing screws. 4. Disconnect electrical connections. 5. Install new pump motor in reverse order.",
+      "image_url": "/images/wash-pump.jpg"
+    }
+  ]
+}
